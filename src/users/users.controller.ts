@@ -95,10 +95,12 @@ export class UsersController {
     return this.userService.getAllUsers();
   }
 
-  // @Get('search')
-  // @ApiOperation({ summary: 'Search users by query' })
-  // @ApiResponse({ status: 200, description: 'Search results retrieved successfully.' })
-  // async searchUsers(@Query('query') query: string) {
-  //   return this.userService.searchUsers(query);
-  // }
+
+  @Post('search')
+  @ApiOperation({ summary: 'Search users by query' })
+  @ApiResponse({ status: 200, description: 'Search results retrieved successfully.' })
+  async searchUsers(@Query('query') query: string) {
+    return this.userService.searchUsers(query);
+  }
+
 }

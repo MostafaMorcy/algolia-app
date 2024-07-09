@@ -7,6 +7,23 @@ export class AlgoliaService {
   private client = algoliasearch('4EXV0UGBTJ', '6d454e9e801a823bb1c4caf757ca8088');
   private index: SearchIndex = this.client.initIndex('users');
 
+  async onModuleInit() {
+    await this.setSearchableAttributes();
+  }
+
+  private async setSearchableAttributes() {
+    this.logger.log('Setting searchable attributes for the Algolia index');
+    await this.index.setSettings({
+      searchableAttributes: ['name', 'address'],
+    }).then(() => {
+      this.logger.log('Searchable attributes set successfully');
+    }).catch(error => {
+      this.logger.error('Error setting searchable attributes', error.message);
+    });
+  }
+
+
+
   async addOrUpdateRecord(user: { id: number; name: string; address: string }) {
     this.logger.log(`Adding/updating user: ${JSON.stringify(user)}`);
     await this.index.saveObject({
@@ -21,17 +38,7 @@ export class AlgoliaService {
     await this.index.deleteObject(userId.toString());
   }
 
-  async search(query: string) {
-    this.logger.log(`Searching for: ${query}`);
-    try {
-      const result = await this.index.search(query);
-      this.logger.log(`Search results: ${JSON.stringify(result.hits)}`);
-      return result.hits;
-    } catch (error) {
-      this.logger.error(`Error searching for: ${query}`, error.stack);
-      throw new Error(`Search query failed: ${error.message}`);
-    }
-  }
+ 
 
   async getRecordById(objectID: string) {
     this.logger.log(`Getting record by ID: ${objectID}`);
@@ -59,6 +66,18 @@ export class AlgoliaService {
     } catch (error) {
       this.logger.error(`Error getting all records`, error.message);
       throw new Error(`Retrieval of all records failed: ${error.message}`);
+    }
+  }
+
+  async searchUsers(query: string) {
+    this.logger.log(`Searching users with query: ${query}`);
+    try {
+      const result = await this.index.search(query);
+      this.logger.log(`Search results: ${JSON.stringify(result.hits)}`);
+      return result.hits;
+    } catch (error) {
+      this.logger.error(`Error searching users with query: ${query}`, error.message);
+      throw new Error(`User search failed: ${error.message}`);
     }
   }
 }

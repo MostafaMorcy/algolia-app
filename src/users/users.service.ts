@@ -40,15 +40,10 @@ export class UsersService {
     this.logger.log(`Retrieving all users`);
     return this.algoliaService.getAllRecords();
   }
+
   async searchUsers(query: string) {
     this.logger.log(`Searching users with query: ${query}`);
-    try {
-      const result = await this.algoliaService.search(query);
-      this.logger.log(`Search results: ${JSON.stringify(result)}`);
-      return result;
-    } catch (error) {
-      this.logger.error(`Error searching users with query: ${query}`, error.message);
-      throw new Error(`Search query failed: ${error.message}`);
-    }
+    return this.algoliaService.searchUsers(query);
   }
+
 }
